@@ -1,4 +1,5 @@
 ## Setup --------------------------------------------
+install.packages('patchwork')
 library(tidyverse)
 library(patchwork)
 library(scales)
@@ -124,7 +125,7 @@ data |>
   geom_point()
 
 ## Aplicación: Modelo de regresión asistencia partidos -----------------------
-
+## Explica más sobre Tidyversr
 library(tidyverse)
 base_url <- "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-02-04/"
 
@@ -167,6 +168,7 @@ attendance_joined |>
     y = "Weekly NFL game attendance"
   ) + sin_lineas
 
+## 
 attendance_df <- attendance_joined |>
   filter(!is.na(weekly_attendance)) |>
   select(
@@ -176,29 +178,35 @@ attendance_df <- attendance_joined |>
 
 attendance_df
 
+install.packages('tidymodels')
 library(tidymodels)
 
 set.seed(108727)
+## Hace split en dos partes para probar cuando entrena (siempre 75%/25%/100%)
 attendance_split <- attendance_df |>
   initial_split(strata = playoffs)
 
 nfl_train <- training(attendance_split)
 nfl_test <- testing(attendance_split)
 
+## Especifica la regresión lineal
 lm_spec <- linear_reg() |>
   set_engine(engine = "lm")
 
 lm_spec
 
+## Entrena el modelo
 lm_fit <- lm_spec |>
-  fit(weekly_attendance ~ .,
+  fit(weekly_attendance ~ ., ## Weekly attendance respecto a todo lo demás del DF
       data = nfl_train
       )
 
 lm_fit |> broom::tidy()
 
+## Intervalo de confianza
 lm_fit |> broom::tidy(conf.int = TRUE)
 
+## Podemos ver la eficiencia del modelo entrenado
 lm_fit |> broom::glance()
 
 results_train <- lm_fit |>
@@ -228,3 +236,4 @@ results_test %>%
     y = "Predicted attendance",
     color = "Type of model"
   ) + sin_lineas
+
